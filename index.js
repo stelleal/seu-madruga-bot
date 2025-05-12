@@ -3,27 +3,27 @@ const { Client, GatewayIntentBits } = require('discord.js');
 const { join } = require("path");
 const { createReadStream } = require("fs");
 const { joinVoiceChannel, createAudioPlayer, createAudioResource } = require('@discordjs/voice');
-require('dotenv').config(); 
+require('dotenv').config();
 
 // Create a new Discord client with message intent 
-const client = new Client({ 
-  intents: [ 
-      GatewayIntentBits.Guilds,  
-      GatewayIntentBits.GuildMessages,  
-      GatewayIntentBits.GuildVoiceStates,
-      GatewayIntentBits.MessageContent] 
-}); 
+const client = new Client({
+  intents: [
+    GatewayIntentBits.Guilds,
+    GatewayIntentBits.GuildMessages,
+    GatewayIntentBits.GuildVoiceStates,
+    GatewayIntentBits.MessageContent]
+});
 
 // Bot is ready 
-client.once('ready', () => { 
-  console.log(`🤖 Logged in as ${client.user.tag}`); 
-}); 
+client.once('ready', () => {
+  console.log(`🤖 Logged in as ${client.user.tag}`);
+});
 
 // Listen and respond to messages 
-client.on('messageCreate', message => { 
+client.on('messageCreate', message => {
 
   // Ignore messages from bots 
-  if (message.author.bot) return; 
+  if (message.author.bot) return;
 
   // Respond to a specific message 
   if (message.content.startsWith('!sm ')) {
@@ -33,27 +33,48 @@ client.on('messageCreate', message => {
     }
 
     if (!message.content.includes('?')) {
-      message.reply('Isso não me parece uma pergunta sua anta.');
+      // TODO: add NOOOOOSSA audio when no question mark is added to the message
+      // const connection = joinVoiceChannel({
+      //   channelId: message.member.voice.channel.id,
+      //   guildId: message.guild.id,
+      //   adapterCreator: message.guild.voiceAdapterCreator,
+      // });
+
+      // const audioPlayer = createAudioPlayer();
+      // const audioToPlay = Math.floor(Math.random() * 2) === 1 ? "./audios/sim.mp3" : "./audios/nao.mp3"
+      // const resource = createAudioResource(createReadStream(join(__dirname, audioToPlay)));
+      // connection.subscribe(audioPlayer);
+      // audioPlayer.play(resource);
+
+      // setTimeout(() => {
+      //   connection.disconnect();
+      // }, 2_000);
+      message.reply('Nooooooooooossaaaaaaaa');
       return;
     }
 
     const connection = joinVoiceChannel({
-        channelId: message.member.voice.channel.id,
-        guildId: message.guild.id,
-        adapterCreator: message.guild.voiceAdapterCreator,
+      channelId: message.member.voice.channel.id,
+      guildId: message.guild.id,
+      adapterCreator: message.guild.voiceAdapterCreator,
     });
 
     const audioPlayer = createAudioPlayer();
-    const audioToPlay = Math.floor(Math.random() * 2) === 1 ? "./audios/sim.mp3" : "./audios/nao.mp3"
+    const randomAudio = Math.floor(Math.random() * 2);
+    const audioToPlay = randomAudio === 1 ? "./audios/sim.mp3" : "./audios/nao.mp3"
+
+    if (randomAudio === 1) message.reply('Sim, senhor 🫡');
+    else message.reply('NÃO!');
+
     const resource = createAudioResource(createReadStream(join(__dirname, audioToPlay)));
     connection.subscribe(audioPlayer);
     audioPlayer.play(resource);
 
     setTimeout(() => {
-        connection.disconnect();
+      connection.disconnect();
     }, 2_000);
   }
-});   
+});
 
 // Log in to Discord using token from .env 
 client.login(process.env.DISCORD_TOKEN); 
